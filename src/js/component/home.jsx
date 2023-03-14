@@ -1,15 +1,17 @@
-import React, { useEffect, useInsertionEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ElementsList from "./ElementsList.jsx";
 import ListCounter from "./ListCounter.jsx";
 import ListDefault from "./ListDefault.jsx";
 import List from "./List.jsx";
 import Card from "./Card.jsx";
 import Input from "./Imput.jsx";
+import ButtonClearAll from "./ButtonClearAll.jsx";
 
 const Home = () => {
-  const [task, setTask] = useState("");
+  const [task, setTask] = useState({ label: text, done: false });
+  const [text, setText] = useState("");
   const [list, setList] = useState([]);
-  
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     getList();
@@ -17,60 +19,161 @@ const Home = () => {
 
   function handleSubmit(e) {
     e.preventDefault();
-    setList([...list, task]);
-    setTask("");
+    task.label = text;
+    let newlist = [...list, task];
+    setList(newlist);
+    addTaskList(newlist);
+    setText("");
   }
-  console.log(task);
-  console.log(list);
 
-  function handleDelete(i) {
+  const addTaskList = async (task) => {
+    const options = {
+      method: "PUT",
+      body: JSON.stringify(task),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    try {
+      const response = await fetch(
+        "https://assets.breatheco.de/apis/fake/todos/user/carorb",
+        options
+      );
+      const data = await response.json();
+      console.log("tarea guardada");
+      console.log(data);
+      if (data.id) {
+        getList();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+    function handleDelete(i) {
     const deleteTask = [...list];
-    deleteinputValue.splice(i, 1);
+    deleteTask.splice(i, 1);
     setList(deleteTask);
+    updateTaskList(list);
   }
+
+  const updateTaskList = async (task) => {
+    const options = {
+      method: "PUT",
+      body: JSON.stringify(task),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    try {
+      const response = await fetch(
+        "https://assets.breatheco.de/apis/fake/todos/user/carorb",
+        options
+      );
+      const data = await response.json();
+      console.log("update");
+      console.log(data);
+      if (data.id) {
+        setList((prevState) => prevState.filter((list) => list.id !== id));
+        getList();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const getList = () => {
-    fetch("https://assets.breatheco.de/apis/fake/todos/user/carolinarb", {
+    fetch("https://assets.breatheco.de/apis/fake/todos/user/carorb", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     })
       .then((resp) => {
-        console.log(resp)
-        console.log(resp.ok); // Será true (verdad) si la respuesta es exitosa.
-        console.log(resp.status); // el código de estado = 200 o código = 400 etc.
-        if (resp.status === 404) throw Error ("Not Found");
-        return resp.json(); // (regresa una promesa) will try to parse the result as json as return a promise that you can .then for results
+        console.log(resp);
+        if (resp.status === 404) throw Error("Not Found");
+        return resp.json();
       })
       .then((data) => {
-        //Aquí es donde debe comenzar tu código después de que finalice la búsqueda
-        console.log(data); //esto imprimirá en la consola el objeto exacto recibido del servidor
-        setList(data)
-    
+        console.log(data);
+        if (data.msg) {
+          createList();
+        } else {
+          setList(data);
+        }
+        console.log(data, "ESTA ES LA DATA");
       })
       .catch((error) => {
-        //manejo de errores
         console.log(error.message);
       });
   };
 
-  console.log(list)
+  const deleteAll = async () => {
+    const options = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    try {
+      const response = await fetch(
+        "https://assets.breatheco.de/apis/fake/todos/user/carorb",
+        options
+      );
+      if (response.status == 200) {
+        getList([]);
+        setError(null);
+      } else {
+        setError("Error al eliminar");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-   return (
-     <Card>
-       <Input handleSubmit={handleSubmit} task={task} setTask={setTask} />
-       <List>
-         {list.length > 0 ? (
-           list.map((task, i) => {
-             return (
-               <ElementsList handleDelete={handleDelete} task={task} i={i} key={i} />
-             );
-           })
-         ) : (
-           <ListDefault />
-         )}
-         <ListCounter list={list} />
+  //   const createList = async (task) => {
+  //     const options = {
+  //         method: 'POST',
+  //         body: JSON.stringify(task),
+  //         headers: {
+  //             'Content-Type': 'application/json'
+  //         }
+  //     }
+  //     try {
+  //         const response = await fetch("https://assets.breatheco.de/apis/fake/todos/user/carorb")
+  //         const data = await response.json();
+  //         console.log("Note Saved");
+  //         console.log(data, "esta es la data");
+  //         if(data.id){
+  //           getList()
+  //         }
+  //     } catch (error) {
+  //         console.log(error);
+  //     }
+  // }
+
+  console.log(list);
+
+  return (
+    <Card>
+      <Input handleSubmit={handleSubmit} text={text} setText={setText} />
+      <ButtonClearAll deleteAll={deleteAll} list={list}/>
+      <List>
+        {list.length > 0 ? (
+          list.map((task, i) => {
+            return (
+              <ElementsList
+                handleDelete={handleDelete}
+                task={task}
+                i={i.task}
+                key={i}
+              />
+            );
+          })
+        ) : (
+          <ListDefault />
+        )}
+        <ListCounter list={list} />
       </List>
     </Card>
   );

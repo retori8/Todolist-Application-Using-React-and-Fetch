@@ -1,7 +1,6 @@
 import React from "react";
 
 export default function ElementsList(props){
-    console.log("props: ", props)
     return(
         <li
         id="task"
@@ -9,7 +8,6 @@ export default function ElementsList(props){
         key={props.i}
         >{props.task.label}
             <button
-            id="buttonDelete"
             type="button"
             className="btn-close btn-close-focus-shadow"
             aria-label="Close"

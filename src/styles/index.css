@@ -16,10 +16,19 @@ body{
 #title{
     margin-bottom: 3%;
     font-family: 'Tilt Prism', cursive;
- }
+}
+#input{
+    margin-bottom: 3%;
+}
 #buttonDelete{
     display: none;
 }
 #task:hover #buttonDelete{
     display:inline-flex
 }
+#clear{
+    margin-bottom: 3%;
+    margin-left: 3%;
+    float: right;
+}
+
