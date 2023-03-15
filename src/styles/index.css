@@ -12,7 +12,7 @@ body{
     font-size: medium;
     background-color: rgb(150, 124, 11);
     border: none;
-    box-shadow: -5px -5px 9px rgba(255,255,255,0.45), 10px 10px 9px rgba(94,104,121,0.3);
+    box-shadow: -5px -5px 9px rgba(226, 222, 222, 0.45), 10px 10px 9px rgba(94,104,121,0.3);
 }
 #title{
     margin-bottom: 3%;
