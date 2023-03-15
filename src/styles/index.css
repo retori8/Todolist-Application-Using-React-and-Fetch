@@ -12,6 +12,7 @@ body{
     font-size: medium;
     background-color: rgb(150, 124, 11);
     border: none;
+    box-shadow: -5px -5px 9px rgba(255,255,255,0.45), 10px 10px 9px rgba(94,104,121,0.3);
 }
 #title{
     margin-bottom: 3%;
@@ -26,9 +27,21 @@ body{
 #task:hover #buttonDelete{
     display:inline-flex
 }
-#clear{
+#listcounter{
+    background-color:rgb(49, 82, 100);
+}
+#buttondeleteall{
     margin-bottom: 3%;
     margin-left: 3%;
     float: right;
-}
+    background-color:white;
+    border: none;
+    color:rgb(150, 124, 11);
+}   
+#buttondeleteall:hover{
+    transform: translateY(2px);
+    color: rgb(250, 247, 249);
+    background-color: rgb(49, 82, 100);
+} 
+
 
